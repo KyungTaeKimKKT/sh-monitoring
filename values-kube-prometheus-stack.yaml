@@ -1,0 +1,40 @@
+### values-kube-prometheus-stack.yaml
+
+
+# ===========================================
+# 공통 NodeAffinity 정의
+# ===========================================
+commonAffinity: &commonAffinity
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: no.monitoring
+              operator: NotIn
+              values:
+                - role
+
+
+# ===========================================
+# 2️⃣ Prometheus
+# ===========================================
+prometheus:
+  prometheusSpec:
+    affinity:
+      <<: *commonAffinity
+
+alertmanager:
+  alertmanagerSpec:
+    affinity:
+      <<: *commonAffinity
+
+prometheusOperator:
+  affinity:
+    <<: *commonAffinity
+
+
+grafana:
+  adminPassword: 1q2w3e4r5*!!
+  extraEnv:
+    - name: TZ
+      value: "Asia/Seoul"

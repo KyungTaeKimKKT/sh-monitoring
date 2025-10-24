@@ -1,0 +1,7 @@
+ingress:
+  enabled: true
+  host: grafana.service.sh
+  # 기타 설정
+ingressHealth:
+  namePostfix: ingress-health
+  enabled: true

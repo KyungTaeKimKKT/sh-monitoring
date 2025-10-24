@@ -1,0 +1,31 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-grafana
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: {{ .Values.ingress.host }}
+    http:
+      paths:
+        {{- if $.Values.ingressHealth.enabled }}
+        - path: /k3s-health
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ $.Release.Name }}-{{ $.Values.ingressHealth.namePostfix }}
+              port:
+                number: 80
+        {{- end }}
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: kube-prometheus-stack-grafana
+              port:
+                number: 80
+{{- end }}

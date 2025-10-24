@@ -1,0 +1,28 @@
+### values-loki.yaml
+
+
+# ===========================================
+# 공통 NodeAffinity 정의
+# ===========================================
+commonAffinity: &commonAffinity
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: no.monitoring
+              operator: NotIn
+              values:
+                - role
+
+
+affinity:
+  <<: *commonAffinity
+persistence:
+  enabled: true
+# resources:
+#   requests:
+#     cpu: "100m"
+#     memory: "256Mi"
+#   limits:
+#     cpu: "200m"
+#     memory: "512Mi"

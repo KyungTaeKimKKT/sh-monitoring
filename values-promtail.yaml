@@ -1,0 +1,37 @@
+# values-promtail.yaml
+# ===========================================
+# 공통 NodeAffinity 정의
+# ===========================================
+commonAffinity: &commonAffinity
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: no.monitoring
+              operator: NotIn
+              values:
+                - role
+
+
+affinity:
+  <<: *commonAffinity
+
+config:
+  clients:
+    - url: http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push
+  positions:
+    filename: /data/positions.yaml
+  scrape_configs:
+    - job_name: kubernetes-pods
+      static_configs:
+        - targets:
+            - localhost
+          labels:
+            job: varlogs
+            __path__: /var/log/containers/*.log
+extraVolumes:
+  - name: positions
+    emptyDir: {}
+extraVolumeMounts:
+  - name: positions
+    mountPath: /data
